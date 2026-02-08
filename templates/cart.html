@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Your Cart</h2>
+{% if cart %}
+<table class="cart-table">
+    <tr>
+        <th>Product</th><th>Qty</th><th>Price</th><th>Subtotal</th><th>Action</th>
+    </tr>
+    {% for item in cart %}
+    <tr>
+        <td>
+            <img src="{{ url_for('static', filename='images/products/' ~ item.product.image) }}" alt="{{ item.product.name }}" class="product-img-thumb">
+            {{ item.product.name }}
+        </td>
+        <td>
+            <form action="{{ url_for('update_cart') }}" method="post" style="display:inline;">
+                <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                <input type="number" name="qty" value="{{ item.qty }}" min="1" style="width: 50px;">
+                <button type="submit">Update</button>
+            </form>
+        </td>
+        <td>₹{{ "%.2f"|format(item.product.price) }}</td>
+        <td>₹{{ "%.2f"|format(item.subtotal) }}</td>
+        <td>
+            <form action="{{ url_for('remove_from_cart') }}" method="post" style="display:inline;">
+                <input type="hidden" name="product_id" value="{{ item.product.id }}">
+                <button type="submit">Remove</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+<p class="cart-total"><strong>Total: ₹{{ "%.2f"|format(total) }}</strong></p>
+<div class="order-form-card">
+    <h3>Order Now</h3>
+    <form action="{{ url_for('bill') }}" method="post">
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="text" name="phone" placeholder="Phone Number" required>
+        <input type="text" name="address" placeholder="Address" required>
+        <button type="submit">Generate Bill</button>
+    </form>
+</div>
+{% else %}
+<p>Your cart is empty.</p>
+{% endif %}
+{% if recommended %}
+<h3 style="margin-top:2.5em;">Recommended Products</h3>
+<div class="product-list">
+    {% for product in recommended %}
+    <div class="product-card">
+        <img src="{{ url_for('static', filename='images/products/' ~ product.image) }}" alt="{{ product.name }}" class="product-img">
+        <h4>{{ product.name }}</h4>
+        <p>{{ product.description }}</p>
+        <form action="{{ url_for('add_to_cart') }}" method="post">
+            <input type="hidden" name="product_id" value="{{ product.id }}">
+            <button type="submit">Add to Cart</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

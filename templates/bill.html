@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+{% endblock %}
+{% block content %}
+<div id="bill-summary" class="bill-card">
+    <h2>Order Summary</h2>
+    <p><strong>Name:</strong> {{ name }}</p>
+    <p><strong>Phone:</strong> {{ phone }}</p>
+    <p><strong>Address:</strong> {{ address }}</p>
+    <table>
+        <tr>
+            <th>Product</th><th>Qty</th><th>Price</th><th>Subtotal</th>
+        </tr>
+        {% for item in cart %}
+        <tr>
+            <td>
+                <img src="{{ url_for('static', filename='images/products/' ~ item.product.image) }}" alt="{{ item.product.name }}" class="product-img-thumb">
+                {{ item.product.name }}
+            </td>
+            <td>{{ item.qty }}</td>
+            <td>₹{{ "%.2f"|format(item.product.price) }}</td>
+            <td>₹{{ "%.2f"|format(item.subtotal) }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <p class="cart-total"><strong>Total: ₹{{ "%.2f"|format(total) }}</strong></p>
+</div>
+<div class="bill-actions" style="text-align:center; margin-bottom:2em;">
+    <button onclick="copyBill()">Copy Bill</button>
+    <button onclick="screenshotBill()">Screenshot Bill</button>
+    <a href="{{ url_for('clear_cart') }}" class="cta-btn" style="margin-left:1em;">Back to Products</a>
+</div>
+<div style="text-align:center; margin-top:2em;">
+    <h3>Thank you for your order!</h3>
+    <p>We appreciate your business.</p>
+</div>
+{% endblock %}
